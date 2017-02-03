@@ -54,4 +54,4 @@
           c (print-res out)]
       (ca/<!! c)
       (println "Finished calculating averages for a stream of" item-count "random numbers, with sample window size of" window-size))
-    (println "Needs three arguments: ITEMCOUNT WINDOWSIZE MAXVALUE DELAY")))
+    (println "Needs four arguments: ITEMCOUNT WINDOWSIZE MAXVALUE DELAY")))
