@@ -3,19 +3,17 @@
    [clojure.string :as s]
    [clojure.core.async :as ca]))
 
-(defn gen-rand [ch n max delay-ms]
+(defn gen-rand [ch max delay-ms]
   (ca/go
     (loop
         [delay (ca/timeout delay-ms)
          i 0]
-      (if (< i n)
-        (let [x (rand max)]
-          (ca/<! delay)
-          (ca/>! ch x)
-          (recur
-            (ca/timeout delay-ms)
-            (inc i)))
-        (ca/close! ch)))))
+      (let [x (rand max)]
+        (ca/<! delay)
+        (ca/>! ch x)
+        (recur
+          (ca/timeout delay-ms)
+          (inc i))))))
 
 (defn avg [coll]
   (let [sum (reduce + 0 coll)]
@@ -42,16 +40,19 @@
         (recur (ca/<! ch))))))
 
 (defn -main [& args]
-  (if (= 4 (count args))
-    (let [item-count (Integer. (nth args 0))
-          window-size (Integer. (nth args 1))
-          max-value (Integer. (nth args 2))
-          delay-ms (Integer. (nth args 3))
+  (if (= 3 (count args))
+    (let [window-size (Integer. (nth args 0))
+          max-value (Integer. (nth args 1))
+          delay-ms (Integer. (nth args 2))
           in (ca/chan)
           out (ca/chan)
-          a (gen-rand in item-count max-value delay-ms)
-          b (calc-avg in out window-size)
-          c (print-res out)]
-      (ca/<!! c)
-      (println "Finished calculating averages for a stream of" item-count "random numbers, with sample window size of" window-size))
-    (println "Needs four arguments: ITEMCOUNT WINDOWSIZE MAXVALUE DELAY")))
+          proc1 (gen-rand in max-value delay-ms)
+          proc2 (calc-avg in out window-size)
+          proc3 (print-res out)]
+      (ca/<!! proc3)
+      (println "Finished calculating averages, with sample window size of" window-size))
+    (do
+      (println "Needs 3 arguments: WINDOWSIZE MAXVALUE DELAY")
+      (println "WINDOWSIZE - number of previous elements to use for each average point")
+      (println "MAXVALUE - the maximum value of each generated random number in the input stream")
+      (println "DELAY - the delay in milliseconds between each generated number in the input stream"))))

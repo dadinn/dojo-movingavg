@@ -7,11 +7,10 @@ Command line tool to calculate moving average on a stream of random values.
 After cloning the repository, it can be run by calling the main
 method with a simple [Leiningen](https://leiningen.org) command:
 
-> lein run ITEMCOUNT WINDOWSIZE MAXVALUE DELAY
+> lein run WINDOWSIZE MAXVALUE DELAY
 
 The command line arguments can be described as the following:
 
- * __ITEMCOUNT__ the number of random values to generate as input stream
  * __WINDOWSIZE__ the size of the sample window for the calculation of
    the moving average
  * __MAXVALUE__ the maximum value for the random numbers to be generated
@@ -22,7 +21,7 @@ maximum value of 5000 and a delay of 500ms between each number
 generated, and calculates the simple moving average with a sample
 size of 5:
 
-> lein run 1000 5 5000 500
+> lein run 5 5000 500
 
 ## License
 
